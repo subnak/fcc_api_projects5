@@ -2,6 +2,8 @@
 
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+var multer  = require('multer');
+var upload = multer({ dest: 'uploads/' });
 
 module.exports = function (app, passport) {
 
@@ -16,8 +18,17 @@ module.exports = function (app, passport) {
 	var clickHandler = new ClickHandler();
 
 	app.route('/')
-		.get(isLoggedIn, function (req, res) {
-			res.sendFile(path + '/public/index.html');
+		.get(function (req, res) {
+			res.render(path + '/public/index.ejs');
+		});
+		
+	app.route('/fileanalyze')
+		.get(function (req,res){
+			res.redirect('/');
+		})
+		.post(upload.single('avatar'),function(req,res){
+			console.log("post content: "+req.file.size);
+			res.json("file size: "+req.file.size);	
 		});
 
 	app.route('/login')
